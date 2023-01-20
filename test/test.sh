@@ -6,6 +6,7 @@ FCLI_PREV_CONFIG=$FCLI_CONFIG
 FCLI_PREV_JWT=$FCLI_JWT
 
 # make sure server is running
+set +e
 NOW=${SECONDS}
 SERVER_WAIT_TIME=0
 while ((${SERVER_WAIT_TIME} <= 60)); do
@@ -22,6 +23,7 @@ while ((${SERVER_WAIT_TIME} <= 60)); do
         sleep 1
     fi
 done
+set -e
 
 # use yaml file for cli configuration
 CURRENT_DIR=$(dirname "$BASH_SOURCE")
