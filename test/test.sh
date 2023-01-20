@@ -26,7 +26,7 @@ echo "*******************************************"
 echo "Test 1: issue credential"
 
 # fetch issue page and parse invitation
-ISSUE_HTML=$(curl -s http://localhost:3001/issue)
+ISSUE_HTML=$(curl -v http://localhost:3001/issue)
 echo "HTML: $ISSUE_HTML"
 INVITATION=$(echo $ISSUE_HTML | awk -v FS="(cols=\"60\">|</textarea>)" '{print $2}')
 echo "INVITATION: $INVITATION"
