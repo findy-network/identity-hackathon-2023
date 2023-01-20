@@ -1,0 +1,41 @@
+name: test
+on: push
+jobs:
+
+  test-ts:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./ts
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: setup env
+        run: |
+          cd ../tools/local-env
+          docker-compose up -d
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "18.x"
+
+      - name: install deps
+        run: npm ci
+
+      - name: start server
+        run: |
+          npm run build
+          npm start &
+        env:
+          AGENCY_API_SERVER_CERT_PATH: '../tools/local-env/cert'
+
+      - name: install cli
+        run: |
+          curl https://raw.githubusercontent.com/findy-network/findy-agent-cli/HEAD/install.sh > install.sh
+          chmod a+x install.sh
+          sudo ./install.sh -b /bin
+
+      - name: run tests
+        run: |
+          cd ..
+          ./test/test.sh
