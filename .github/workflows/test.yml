@@ -36,4 +36,6 @@ jobs:
           sudo ./install.sh -b /bin
 
       - name: run tests
-        run: ./test/test.sh
+        run: |
+          cd ..
+          ./test/test.sh
