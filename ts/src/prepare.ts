@@ -8,7 +8,7 @@ export default (agentClient: AgentClient, userName: string): Promise<string> => 
         try {
             await agentClient.getSchema(schemaMsg)
         } catch {
-            setTimeout(createCredDef, 10000, schemaId)
+            setTimeout(createCredDef, 1000, schemaId)
             return
         }
         console.log(`Creating cred def for schema ID ${schemaId}`)
