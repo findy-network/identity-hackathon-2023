@@ -5,6 +5,24 @@ set -e
 FCLI_PREV_CONFIG=$FCLI_CONFIG
 FCLI_PREV_JWT=$FCLI_JWT
 
+# make sure server is running
+NOW=${SECONDS}
+SERVER_WAIT_TIME=0
+while ((${SERVER_WAIT_TIME} <= 60)); do
+    printf "."
+    SERVER_WAIT_TIME=$(($SECONDS - $NOW))
+    if ((${SERVER_WAIT_TIME} >= 60)); then
+        printf "\nServer start failed\n"
+        exit 1
+    fi
+    RES_CODE=$(curl -s --write-out '%{http_code}' --output /dev/null http://localhost:3001)
+    if ((${RES_CODE} == 200)); then
+        SERVER_WAIT_TIME=61
+    else
+        sleep 1
+    fi
+done
+
 # use yaml file for cli configuration
 CURRENT_DIR=$(dirname "$BASH_SOURCE")
 export FCLI_CONFIG=$CURRENT_DIR/config.yaml
@@ -26,10 +44,8 @@ echo "*******************************************"
 echo "Test 1: issue credential"
 
 # fetch issue page and parse invitation
-ISSUE_HTML=$(curl -v http://localhost:3001/issue)
-echo "HTML: $ISSUE_HTML"
+ISSUE_HTML=$(curl -s http://localhost:3001/issue)
 INVITATION=$(echo $ISSUE_HTML | awk -v FS="(cols=\"60\">|</textarea>)" '{print $2}')
-echo "INVITATION: $INVITATION"
 
 # make connection to service agent
 CONNECTION_ID=$(findy-agent-cli agent connect --invitation $INVITATION)
@@ -44,9 +60,10 @@ while ((${ISSUE_WAIT_TIME} <= 60)); do
         printf "\nIssuing failed\n"
         exit 1
     fi
-    sleep 1
     if grep -q '| ISSUE_CREDENTIAL | STATUS_UPDATE |' test.log; then
         ISSUE_WAIT_TIME=61
+    else
+        sleep 1
     fi
 done
 
@@ -72,9 +89,10 @@ while ((${VERIFY_WAIT_TIME} <= 60)); do
         printf "\nVerifying failed\n"
         exit 1
     fi
-    sleep 1
     if grep -q '| PRESENT_PROOF | STATUS_UPDATE |' test.log; then
         VERIFY_WAIT_TIME=61
+    else
+        sleep 1
     fi
 done
 
