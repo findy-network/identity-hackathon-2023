@@ -16,8 +16,12 @@ import (
 	"google.golang.org/grpc"
 )
 
-const WaitTime = time.Millisecond * 500
-const MaxWaitTime = time.Minute * 3
+type Listener interface {
+	HandleNewConnection(id string)
+	HandleNewCredential(id, connectionID string)
+	HandleNewProof(id, connectionID string)
+	HandleProofOnHold(id, connectionID string)
+}
 
 type AgencyClient struct {
 	Conn           client.Conn
@@ -32,11 +36,12 @@ type Agent struct {
 	AgencyPort int
 	CredDefID  string
 	UserName   string
+	Listener   Listener
 }
 
 var authnCmd = authn.Cmd{
 	SubCmd:   "",
-	UserName: "go-example",
+	UserName: "",
 	Url:      os.Getenv("AGENCY_AUTH_URL"),
 	AAGUID:   "12c85a48-4baf-47bd-b51f-f192871a1511",
 	Key:      os.Getenv("AGENCY_KEY"),
@@ -45,8 +50,15 @@ var authnCmd = authn.Cmd{
 	Origin:   os.Getenv("AGENCY_AUTH_ORIGIN"),
 }
 
-func Init() (agent *Agent, err error) {
+type SchemaInfo struct {
+	Name       string
+	Attributes []string
+}
+
+func Init(userName string, schema SchemaInfo, listener Listener) (agent *Agent, err error) {
 	defer err2.Handle(&err)
+
+	authnCmd.UserName = userName
 
 	// use default values if no environment configuration
 	if authnCmd.Url == "" {
@@ -75,6 +87,7 @@ func Init() (agent *Agent, err error) {
 		UserName:   authnCmd.UserName,
 		AgencyHost: serverAddress,
 		AgencyPort: serverPort,
+		Listener:   listener,
 	}
 	try.To(agent.Login())
 
@@ -95,7 +108,7 @@ func Init() (agent *Agent, err error) {
 		ProtocolClient: agency.NewProtocolServiceClient(conn),
 	}
 
-	agent.CredDefID = try.To1(agent.createCredDef())
+	agent.CredDefID = try.To1(agent.createCredDef(schema))
 
 	// start listening to events
 	ch := try.To1(agent.Client.Conn.ListenStatus(context.TODO(), &agency.ClientID{ID: uuid.New().String()}))
@@ -107,6 +120,34 @@ func Init() (agent *Agent, err error) {
 			}
 			notification := chRes.GetNotification()
 			log.Printf("Received agent notification %v\n", notification)
+
+			protocolID := &agency.ProtocolID{
+				ID:     notification.ProtocolID,
+				TypeID: notification.ProtocolType,
+			}
+			status := try.To1(agent.Client.ProtocolClient.Status(context.TODO(), protocolID))
+
+			switch notification.GetTypeID() {
+			case agency.Notification_STATUS_UPDATE:
+				if status.State.State == agency.ProtocolState_OK {
+					switch notification.GetProtocolType() {
+					case agency.Protocol_DIDEXCHANGE:
+						agent.Listener.HandleNewConnection(status.GetDIDExchange().ID)
+					case agency.Protocol_ISSUE_CREDENTIAL:
+						agent.Listener.HandleNewCredential(notification.ProtocolID, notification.ConnectionID)
+					case agency.Protocol_PRESENT_PROOF:
+						agent.Listener.HandleNewProof(notification.ProtocolID, notification.ConnectionID)
+					default:
+						log.Printf("No handler for protocol message %s\n", notification.GetProtocolType())
+					}
+				} else {
+					log.Printf("Status NOK %v for %s\n", status, notification.GetProtocolType())
+				}
+			case agency.Notification_PROTOCOL_PAUSED:
+				agent.Listener.HandleProofOnHold(notification.ProtocolID, notification.ConnectionID)
+			default:
+				log.Printf("No handler for notification %s\n", notification.GetTypeID())
+			}
 
 		}
 	}()
@@ -134,7 +175,6 @@ func (a *Agent) login() (err error) {
 	try.To(myCmd.Validate())
 	r := try.To1(myCmd.Exec(os.Stdout))
 
-	// TODO: renew token on expiry
 	a.JWT = r.Token
 	return
 }
@@ -153,15 +193,24 @@ func (a *Agent) Login() (err error) {
 	return
 }
 
-func (a *Agent) createCredDef() (credDefID string, err error) {
+func (a *Agent) createCredDef(schema SchemaInfo) (credDefID string, err error) {
 	defer err2.Handle(&err)
+
+	const credDefIDFileName = "CRED_DEF_ID"
+
+	credDefIDBytes, err := os.ReadFile(credDefIDFileName)
+	if err == nil {
+		credDefID = string(credDefIDBytes)
+		log.Printf("Credential definition %s exists already", credDefID)
+		return
+	}
 
 	schemaRes := try.To1(a.Client.AgentClient.CreateSchema(
 		context.TODO(),
 		&agency.SchemaCreate{
-			Name:       "foobar",
+			Name:       schema.Name,
 			Version:    "1.0",
-			Attributes: []string{"foo"},
+			Attributes: schema.Attributes,
 		},
 	))
 
@@ -189,6 +238,7 @@ func (a *Agent) createCredDef() (credDefID string, err error) {
 	))
 
 	log.Printf("Credential definition %s created successfully", res.ID)
+	try.To(os.WriteFile(credDefIDFileName, []byte(credDefID), 0666))
 
 	return res.GetID(), nil
 }
