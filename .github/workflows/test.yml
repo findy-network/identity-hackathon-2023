@@ -59,7 +59,7 @@ jobs:
           go-version: 1.19.x
 
       - name: start server
-        run: go run .
+        run: go run . &
         env:
           AGENCY_API_SERVER_CERT_PATH: '../tools/local-env/cert'
 
