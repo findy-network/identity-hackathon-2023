@@ -183,8 +183,8 @@ func (a *Agent) Login() (err error) {
 	defer err2.Handle(&err)
 
 	// first try to login
-	err = a.login()
-	if err != nil {
+	firstTryErr := a.login()
+	if firstTryErr != nil {
 		// if login fails, try to register and relogin
 		try.To(a.register())
 		try.To(a.login())
