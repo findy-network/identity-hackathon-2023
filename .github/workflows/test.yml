@@ -39,3 +39,37 @@ jobs:
         run: |
           cd ..
           ./test/test.sh
+
+  test-go:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./go
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: setup env
+        run: |
+          cd ../tools/local-env
+          docker-compose up -d
+
+      - name: setup
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.19.x
+
+      - name: start server
+        run: go run . &
+        env:
+          AGENCY_API_SERVER_CERT_PATH: '../tools/local-env/cert'
+
+      - name: install cli
+        run: |
+          curl https://raw.githubusercontent.com/findy-network/findy-agent-cli/HEAD/install.sh > install.sh
+          chmod a+x install.sh
+          sudo ./install.sh -b /bin
+
+      - name: run tests
+        run: |
+          cd ..
+          ./test/test.sh
