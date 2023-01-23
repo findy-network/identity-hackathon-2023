@@ -33,6 +33,8 @@ func (a *AgentListener) HandleNewConnection(id string) {
 	})
 
 	log.Printf(`New connection: %s`, id)
+
+	// If connection was for issuing, continue by issuing the "foobar" credential
 	if _, ok := a.issue.Load(id); ok {
 		a.issue.Delete(id)
 
@@ -61,6 +63,7 @@ func (a *AgentListener) HandleNewConnection(id string) {
 		}
 		try.To1(ourAgent.Client.Conn.DoStart(context.TODO(), protocol))
 
+		// If connection was for verifying, continue by verifying the "foobar" credential
 	} else {
 		a.verify.Delete(id)
 
@@ -101,6 +104,9 @@ func (a *AgentListener) HandleNewProof(id, connectionID string) {
 
 }
 
+// This function is called after proof is verified cryptographically.
+// The application can execute its business logic and reject the proof
+// if the attribute values are not valid.
 func (a *AgentListener) HandleProofOnHold(id, connectionID string) {
 	defer err2.Catch(func(err error) {
 		log.Println(err)
@@ -108,6 +114,7 @@ func (a *AgentListener) HandleProofOnHold(id, connectionID string) {
 
 	log.Printf(`Proof paused: %s`, id)
 
+	// we have no special logic here - accept all received values
 	state := &agency.ProtocolState{
 		ProtocolID: &agency.ProtocolID{
 			TypeID: agency.Protocol_PRESENT_PROOF,
@@ -132,6 +139,7 @@ func homeHandler(response http.ResponseWriter, r *http.Request) {
 	try.To1(response.Write([]byte("Go example")))
 }
 
+// Show pairwise invitation. Once connection is established, issue credential.
 func issueHandler(response http.ResponseWriter, r *http.Request) {
 	defer err2.Catch(func(err error) {
 		log.Println(err)
@@ -141,6 +149,7 @@ func issueHandler(response http.ResponseWriter, r *http.Request) {
 	agentListener.issue.Store(id, true)
 }
 
+// Show pairwise invitation. Once connection is established, verify credential.
 func verifyHandler(response http.ResponseWriter, r *http.Request) {
 	defer err2.Catch(func(err error) {
 		log.Println(err)
@@ -158,6 +167,9 @@ func renderInvitation(header string, response http.ResponseWriter) (invitationID
 		&agency.InvitationBase{Label: ourAgent.UserName},
 	))
 
+	var invitationMap map[string]any
+	try.To(json.Unmarshal([]byte(res.GetJSON()), &invitationMap))
+
 	url := res.URL
 	log.Printf("Created invitation\n %s\n", url)
 
@@ -174,8 +186,6 @@ func renderInvitation(header string, response http.ResponseWriter) (invitationID
 
 	try.To1(response.Write([]byte(html)))
 
-	var invitationMap map[string]any
-	try.To(json.Unmarshal([]byte(res.GetJSON()), &invitationMap))
 	return invitationMap["@id"].(string), nil
 }
 

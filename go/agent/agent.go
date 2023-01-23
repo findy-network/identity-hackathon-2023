@@ -108,9 +108,11 @@ func Init(userName string, schema SchemaInfo, listener Listener) (agent *Agent, 
 		ProtocolClient: agency.NewProtocolServiceClient(conn),
 	}
 
+	// Credential definition is created on server startup.
+	// We need it to be able to issue credentials.
 	agent.CredDefID = try.To1(agent.createCredDef(schema))
 
-	// start listening to events
+	// Listening callback handles agent events
 	ch := try.To1(agent.Client.Conn.ListenStatus(context.TODO(), &agency.ClientID{ID: uuid.New().String()}))
 	go func() {
 		for {
