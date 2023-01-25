@@ -76,6 +76,9 @@ jobs:
 
   test-kt:
     runs-on: ubuntu-latest
+    env:
+      USERNAME: ${{ github.repository_owner }}
+      TOKEN: ${{ secrets.GITHUB_TOKEN }}
     defaults:
       run:
         working-directory: ./kotlin
