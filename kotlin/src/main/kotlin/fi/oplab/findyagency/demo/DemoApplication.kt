@@ -50,8 +50,8 @@ class AppController {
                 fun(): Protocol.Type =
                     if (info.state.state == ProtocolState.State.OK) status.protocolType
                     else Protocol.Type.NONE
-            when (getType()) {
 
+            when (getType()) {
               // New connection established
               Protocol.Type.DIDEXCHANGE -> {
                 println("New connection ${status.protocolID} established")
@@ -93,7 +93,8 @@ class AppController {
             // Proof on hold
           }
           Notification.Type.PROTOCOL_PAUSED -> {
-            // the cryptographic proof is done, we don't care about the values, so accept always
+            // the cryptographic proof is done, we don't care about the values, so
+            // accept always
             agent.connection.protocolClient.resumeProofRequest(status.protocolID, true)
           }
           else -> println("no handler for notification type: ${status.typeID}")
@@ -136,6 +137,3 @@ class AppController {
 </html>"""
   }
 }
-
-// TODO: render invitations
-// TODO: listener

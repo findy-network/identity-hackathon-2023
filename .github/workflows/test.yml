@@ -89,11 +89,14 @@ jobs:
 
       - uses: actions/setup-java@v3
         with:
-          java-version: 19
+          java-version: 17
           distribution: "zulu"
       - uses: gradle/gradle-build-action@v2
         with:
           gradle-version: 7.6
+
+      - name: build server
+        run: gradle build
 
       - name: start server
         run: gradle bootRun &
