@@ -9,10 +9,10 @@ FCLI_PREV_JWT=$FCLI_JWT
 set +e
 NOW=${SECONDS}
 SERVER_WAIT_TIME=0
-while ((${SERVER_WAIT_TIME} <= 60)); do
+while ((${SERVER_WAIT_TIME} <= 360)); do
     printf "."
     SERVER_WAIT_TIME=$(($SECONDS - $NOW))
-    if ((${SERVER_WAIT_TIME} >= 60)); then
+    if ((${SERVER_WAIT_TIME} >= 360)); then
         printf "\nServer start failed\n"
         exit 1
     fi
