@@ -90,6 +90,12 @@ jobs:
           cd ../tools/local-env
           docker-compose up -d
 
+      - name: install cli
+        run: |
+          curl https://raw.githubusercontent.com/findy-network/findy-agent-cli/HEAD/install.sh > install.sh
+          chmod a+x install.sh
+          sudo ./install.sh -b /bin
+
       - uses: actions/setup-java@v3
         with:
           java-version: 17
@@ -105,12 +111,6 @@ jobs:
         run: gradle bootRun &
         env:
           AGENCY_API_SERVER_CERT_PATH: '../tools/local-env/cert'
-
-      - name: install cli
-        run: |
-          curl https://raw.githubusercontent.com/findy-network/findy-agent-cli/HEAD/install.sh > install.sh
-          chmod a+x install.sh
-          sudo ./install.sh -b /bin
 
       - name: run tests
         run: |
