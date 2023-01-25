@@ -73,3 +73,40 @@ jobs:
         run: |
           cd ..
           ./test/test.sh
+
+  test-kt:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./kotlin
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: setup env
+        run: |
+          cd ../tools/local-env
+          docker-compose up -d
+
+      - uses: actions/setup-java@v3
+        with:
+          java-version: 19
+          distribution: "zulu"
+      - uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: 7.6
+
+      - name: start server
+        run: gradle bootRun &
+        env:
+          AGENCY_API_SERVER_CERT_PATH: '../tools/local-env/cert'
+
+      - name: install cli
+        run: |
+          curl https://raw.githubusercontent.com/findy-network/findy-agent-cli/HEAD/install.sh > install.sh
+          chmod a+x install.sh
+          sudo ./install.sh -b /bin
+
+      - name: run tests
+        run: |
+          cd ..
+          ./test/test.sh
