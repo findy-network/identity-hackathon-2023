@@ -6,9 +6,11 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"os"
 	"sync"
 	"time"
 
+	client "github.com/findy-network/findy-common-go/agency/client/async"
 	agency "github.com/findy-network/findy-common-go/grpc/agency/v1"
 	"github.com/findy-network/identity-hackathon-2023/go/agent"
 	"github.com/gorilla/mux"
@@ -34,6 +36,8 @@ func (a *AgentListener) HandleNewConnection(id string) {
 
 	log.Printf(`New connection: %s`, id)
 
+	pw := client.NewPairwise(ourAgent.Client.Conn, id)
+
 	// If connection was for issuing, continue by issuing the "foobar" credential
 	if _, ok := a.issue.Load(id); ok {
 		a.issue.Delete(id)
@@ -44,24 +48,17 @@ func (a *AgentListener) HandleNewConnection(id string) {
 			Value: "bar",
 		}
 
-		log.Printf("Propose credential, conn id: %s, credDefID: %s, attrs: %v", id, ourAgent.CredDefID, attributes)
+		log.Printf("Offer credential, conn id: %s, credDefID: %s, attrs: %v", id, ourAgent.CredDefID, attributes)
 
-		protocol := &agency.Protocol{
-			ConnectionID: id,
-			TypeID:       agency.Protocol_ISSUE_CREDENTIAL,
-			Role:         agency.Protocol_INITIATOR,
-			StartMsg: &agency.Protocol_IssueCredential{
-				IssueCredential: &agency.Protocol_IssueCredentialMsg{
-					CredDefID: ourAgent.CredDefID,
-					AttrFmt: &agency.Protocol_IssueCredentialMsg_Attributes{
-						Attributes: &agency.Protocol_IssuingAttributes{
-							Attributes: attributes,
-						},
-					},
-				},
-			},
-		}
-		try.To1(ourAgent.Client.Conn.DoStart(context.TODO(), protocol))
+		res := try.To1(pw.IssueWithAttrs(
+			context.TODO(),
+			ourAgent.CredDefID,
+			&agency.Protocol_IssuingAttributes{
+				Attributes: attributes,
+			}),
+		)
+
+		log.Printf("Credential offered: %s", res.GetID())
 
 		// If connection was for verifying, continue by verifying the "foobar" credential
 	} else {
@@ -75,21 +72,11 @@ func (a *AgentListener) HandleNewConnection(id string) {
 
 		log.Printf("Request proof, conn id: %s, attrs: %v", id, attributes)
 
-		protocol := &agency.Protocol{
-			ConnectionID: id,
-			TypeID:       agency.Protocol_PRESENT_PROOF,
-			Role:         agency.Protocol_INITIATOR,
-			StartMsg: &agency.Protocol_PresentProof{
-				PresentProof: &agency.Protocol_PresentProofMsg{
-					AttrFmt: &agency.Protocol_PresentProofMsg_Attributes{
-						Attributes: &agency.Protocol_Proof{
-							Attributes: attributes,
-						},
-					},
-				},
-			},
-		}
-		try.To1(ourAgent.Client.Conn.DoStart(context.TODO(), protocol))
+		res := try.To1(pw.ReqProofWithAttrs(context.TODO(), &agency.Protocol_Proof{
+			Attributes: attributes,
+		}))
+
+		log.Printf("Proof verified: %s", res.GetID())
 
 	}
 }
@@ -112,22 +99,20 @@ func (a *AgentListener) HandleProofOnHold(id, connectionID string) {
 		log.Println(err)
 	})
 
-	log.Printf(`Proof paused: %s`, id)
+	log.Printf("Proof paused: %s", id)
+
+	pw := client.NewPairwise(ourAgent.Client.Conn, id)
 
 	// we have no special logic here - accept all received values
-	state := &agency.ProtocolState{
-		ProtocolID: &agency.ProtocolID{
-			TypeID: agency.Protocol_PRESENT_PROOF,
-			Role:   agency.Protocol_RESUMER,
-			ID:     id,
-		},
-		State: agency.ProtocolState_ACK,
-	}
-
-	try.To1(ourAgent.Client.ProtocolClient.Resume(
+	res := try.To1(pw.Resume(
 		context.TODO(),
-		state,
+		id,
+		agency.Protocol_PRESENT_PROOF,
+		agency.ProtocolState_ACK,
 	))
+
+	log.Printf("Proof continued: %s", res.GetID())
+
 }
 
 // Routes
@@ -173,7 +158,7 @@ func renderInvitation(header string, response http.ResponseWriter) (invitationID
 	url := res.URL
 	log.Printf("Created invitation\n %s\n", url)
 
-	png, err := qrcode.Encode(url, qrcode.Highest, 256)
+	png, err := qrcode.Encode(url, qrcode.Medium, 512)
 	imgSrc := "data:image/png;base64," + base64.StdEncoding.EncodeToString([]byte(png))
 
 	html := `<html>
@@ -193,7 +178,11 @@ func main() {
 	defer err2.Catch(func(err error) {
 		log.Fatal(err)
 	})
-	ourAgent = try.To1(agent.Init("go-example", agent.SchemaInfo{
+	agentName := os.Getenv("AGENCY_USER_NAME")
+	if agentName == "" {
+		agentName = "go-example"
+	}
+	ourAgent = try.To1(agent.Init(agentName, agent.SchemaInfo{
 		Name:       "foobar",
 		Attributes: []string{"foo"},
 	}, agentListener))

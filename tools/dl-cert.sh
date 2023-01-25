@@ -5,6 +5,7 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
+rm -rf ./cert
 cp -R ./tools/local-env/cert ./cert
 rm ./cert/server/server.crt
 

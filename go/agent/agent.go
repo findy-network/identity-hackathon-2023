@@ -37,6 +37,7 @@ type Agent struct {
 	CredDefID  string
 	UserName   string
 	Listener   Listener
+	ClientID   string
 }
 
 var authnCmd = authn.Cmd{
@@ -88,6 +89,7 @@ func Init(userName string, schema SchemaInfo, listener Listener) (agent *Agent, 
 		AgencyHost: serverAddress,
 		AgencyPort: serverPort,
 		Listener:   listener,
+		ClientID:   uuid.New().String(),
 	}
 	try.To(agent.Login())
 
@@ -113,7 +115,7 @@ func Init(userName string, schema SchemaInfo, listener Listener) (agent *Agent, 
 	agent.CredDefID = try.To1(agent.createCredDef(schema))
 
 	// Listening callback handles agent events
-	ch := try.To1(agent.Client.Conn.ListenStatus(context.TODO(), &agency.ClientID{ID: uuid.New().String()}))
+	ch := try.To1(agent.Client.Conn.ListenStatus(context.TODO(), &agency.ClientID{ID: agent.ClientID}))
 	go func() {
 		for {
 			chRes, ok := <-ch
@@ -200,8 +202,8 @@ func (a *Agent) createCredDef(schema SchemaInfo) (credDefID string, err error) {
 
 	const credDefIDFileName = "CRED_DEF_ID"
 
-	credDefIDBytes, err := os.ReadFile(credDefIDFileName)
-	if err == nil {
+	credDefIDBytes, credDefReadErr := os.ReadFile(credDefIDFileName)
+	if credDefReadErr == nil {
 		credDefID = string(credDefIDBytes)
 		log.Printf("Credential definition %s exists already", credDefID)
 		return
@@ -238,9 +240,10 @@ func (a *Agent) createCredDef(schema SchemaInfo) (credDefID string, err error) {
 			Tag:      authnCmd.UserName,
 		},
 	))
+	credDefID = res.GetID()
 
 	log.Printf("Credential definition %s created successfully", res.ID)
 	try.To(os.WriteFile(credDefIDFileName, []byte(credDefID), 0666))
 
-	return res.GetID(), nil
+	return
 }

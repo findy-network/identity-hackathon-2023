@@ -8,17 +8,18 @@ FCLI_PREV_JWT=$FCLI_JWT
 # make sure server is running
 set +e
 NOW=${SECONDS}
+MAX_WAIT_TIME=60
 SERVER_WAIT_TIME=0
-while ((${SERVER_WAIT_TIME} <= 60)); do
+while ((${SERVER_WAIT_TIME} <= $MAX_WAIT_TIME)); do
     printf "."
     SERVER_WAIT_TIME=$(($SECONDS - $NOW))
-    if ((${SERVER_WAIT_TIME} >= 60)); then
+    if ((${SERVER_WAIT_TIME} >= $MAX_WAIT_TIME)); then
         printf "\nServer start failed\n"
         exit 1
     fi
     RES_CODE=$(curl -s --write-out '%{http_code}' --output /dev/null http://localhost:3001)
     if ((${RES_CODE} == 200)); then
-        SERVER_WAIT_TIME=61
+        SERVER_WAIT_TIME=$(($MAX_WAIT_TIME + 1))
     else
         sleep 1
     fi

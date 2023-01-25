@@ -7,5 +7,6 @@
 ## Start server
 
 ```bash
+go mod tidy -e
 go run .
 ```
