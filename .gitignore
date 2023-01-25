@@ -1,4 +1,6 @@
 .envrc
 *.log
 .data
-cert/
+/cert
+CRED_DEF_ID
+.DS_Store

@@ -3,6 +3,7 @@ import { createAcator, openGRPCConnection, agencyv1 } from '@findy-network/findy
 import QRCode from 'qrcode'
 
 import prepareIssuer from './prepare';
+import { existsSync, readFileSync, writeFileSync } from 'fs';
 
 
 const app: Express = express();
@@ -41,7 +42,14 @@ const runApp = async () => {
     const protocolClient = await createProtocolClient()
     // Credential definition is created on server startup.
     // We need it to be able to issue credentials.
-    const credDefId = await prepareIssuer(agentClient, userName)
+    const credDefIdFilePath = "CRED_DEF_ID"
+    const credDefCreated = existsSync(credDefIdFilePath)
+    const credDefId = credDefCreated ? readFileSync(credDefIdFilePath).toString() : await prepareIssuer(agentClient, userName)
+    if (!credDefCreated) {
+        // store id in order to avoid unnecessary creations
+        writeFileSync(credDefIdFilePath, credDefId)
+    }
+    console.log(`Credential definition available: ${credDefId}`)
 
     // Listening callback handles agent events
     await agentClient.startListeningWithHandler(

@@ -1,4 +1,5 @@
 import { agencyv1, AgentClient } from '@findy-network/findy-common-ts'
+import { existsSync, readFileSync, writeFileSync } from 'fs';
 
 export default (agentClient: AgentClient, userName: string): Promise<string> => new Promise(async (resolve) => {
     const createCredDef = async (schemaId: string) => {
