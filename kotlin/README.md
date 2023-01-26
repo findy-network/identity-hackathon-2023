@@ -2,7 +2,7 @@
 
 ## Setup authentication to GitHub registry
 
-Create personal access token with packages:read-permission.
+[Create personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token#creating-a-personal-access-token-classic) with read:packages-permission.
 
 Declare env variables
 
@@ -19,13 +19,20 @@ Note that API server cert path can be empty if using trusted issuer.
 
 ```bash
 # agency API server cert path (leave empty if trusted issuer)
-export AGENCY_API_SERVER_CERT_PATH='/path/to/self-issued-cert'
+export FCLI_TLS_PATH='/path/to/self-issued-cert'
 ```
 
 ## Install CLI
+
+Currently, agency Kotlin wrapper uses Findy Agency CLI tool for authentication.
+The environment should have [findy-agent-cli](https://github.com/findy-network/findy-agent-cli#installation) in `PATH`.
 
 ## Run server
 
 ```bash
 gradle bootRun
 ```
+
+## More examples
+
+* [Kotlin sample](https://github.com/findy-network/findy-common-kt)

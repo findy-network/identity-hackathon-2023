@@ -1,0 +1,41 @@
+initial:
+  sends:
+    - data: |2-
+        Hi there 👋
+      protocol: basic_message
+  target: VERIFY_CRED
+name: verify bot
+states:
+  VERIFY_CRED:
+    transitions:
+      - trigger:
+          protocol: basic_message
+        sends:
+          - data: |-
+              We need to verify your foobar credential.
+              Please accept the proof and we can continue.
+            no_status: true
+            protocol: basic_message
+          - data: '[{"name":"foo","credDefId":"<CRED_DEF_ID>"}]'
+            protocol: present_proof
+        target: WAITING_CRED_PROOF_QA
+  WAITING_CRED_PROOF_QA:
+    transitions:
+      - sends:
+          - data: ACK
+            protocol: answer
+        target: WAITING_CRED_PROOF
+        trigger:
+          data: '[{"name":"foo","credDefId":"<CRED_DEF_ID>"}]'
+          protocol: present_proof
+          rule: ACCEPT_AND_INPUT_VALUES
+          type_id: ANSWER_NEEDED_PROOF_VERIFY
+  WAITING_CRED_PROOF:
+    transitions:
+      - sends:
+          - data: |-
+              You seem to have a valid foobar credential!
+            no_status: true
+            protocol: basic_message
+        trigger:
+          protocol: present_proof

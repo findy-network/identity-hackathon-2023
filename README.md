@@ -14,49 +14,58 @@ servers sends either a credential (`/issue`) or proof request (`/verify`) to the
 ### Setup env variables for the agency connection
 
 Use values for your cloud agency installation.
+You can get the cloud agency configuration from the cloud agency maintainer.
 Default values point to localhost installation.
 
 ```bash
 # agency authentication service URL
-export AGENCY_AUTH_URL='http://localhost:8088'
+export FCLI_URL='http://localhost:8088'
 
 # agency authentication origin
-export AGENCY_AUTH_ORIGIN='http://localhost:3000'
+export FCLI_ORIGIN='http://localhost:3000'
 
 # desired agent user name
-export AGENCY_USER_NAME='ts-example'
+# note: this should be an unique string within agency context,
+# use for example your email address
+export FCLI_USER='my-very-own-issuer@example.com'
 
 # desired agent authentication key (create new key: 'findy-agent-cli new-key')
-export AGENCY_KEY='15308490f1e4026284594dd08d31291bc8ef2aeac730d0daf6ff87bb92d4336c'
+# note: this key authenticates your client to agency, so keep it secret
+export FCLI_KEY='15308490f1e4026284594dd08d31291bc8ef2aeac730d0daf6ff87bb92d4336c'
 
 # agency API server
-export AGENCY_API_SERVER_ADDRESS='localhost'
+export AGENCY_API_SERVER='localhost'
 
 # agency API server port
 export AGENCY_API_SERVER_PORT='50052'
 
+# API server address for CLI
+export FCLI_SERVER="$AGENCY_API_SERVER:$AGENCY_API_SERVER_PORT"
+
 # agency API server cert path
-export AGENCY_API_SERVER_CERT_PATH='/path/to/self-issued-cert'
+export FCLI_TLS_PATH='/path/to/self-issued-cert'
 ```
 
-If you need to download the server cert from a cloud installation, you can use script:
+If you need to download the server cert from a cloud installation, you can use the script `dl-cert.sh`:
 
 ```bash
-./tools/dl-cert.sh <server_address>:<server_port>
-
-# example:
-./tools/dl-cert.sh agency-api.example.com:50051
+./tools/dl-cert.sh "$FCLI_SERVER"
 ```
 
-### Run the sample server
+### Run the CLI example
+
+* [CLI](./cli/README.md)
+
+### ...or run the sample server
 
 * [Go](./go/README.md)
+* [Kotlin](./kotlin/README.md)
 * [Typescript](./ts/README.md)
 
-Note that server start may take a while at first run, because new credential definition
+Note that server start may take a while at first run, because the new credential definition
 is registered on the ledger.
 
-### Testing
+#### Testing the server
 
 1. Open URL <http://localhost:3001/issue> with browser.
 1. Read the QR code with your wallet application or
@@ -68,6 +77,8 @@ paste the invitation url to the "Add Connection" dialog input field.
 1. Accept the proof request sent from this server.
 
 ## Running agency on localhost
+
+NOTE: setting up a localhost agency is not needed when using a cloud agency.
 
 ```bash
 cd tools/local-env

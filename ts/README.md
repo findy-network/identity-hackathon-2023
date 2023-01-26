@@ -8,7 +8,7 @@ Note that API server cert path can be empty if using trusted issuer.
 
 ```bash
 # agency API server cert path (leave empty if trusted issuer)
-export AGENCY_API_SERVER_CERT_PATH='/path/to/self-issued-cert'
+export FCLI_TLS_PATH='/path/to/self-issued-cert'
 ```
 
 ## Start server
@@ -19,3 +19,9 @@ npm install
 npm run build
 npm run dev     # start server in watch mode
 ```
+
+## More TS+JS examples
+
+* [Decentralized identity demo](https://github.com/findy-network/agency-demo)
+* [Issuer tool](https://github.com/findy-network/findy-issuer-tool)
+* [OIDC IdP](https://github.com/findy-network/findy-oidc-provider)

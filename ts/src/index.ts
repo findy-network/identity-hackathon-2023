@@ -12,23 +12,23 @@ const invitations: { issue: string[], verify: string[] } = {
     issue: [],
     verify: []
 }
-const userName = process.env.AGENCY_USER_NAME || 'ts-example'
+const userName = process.env.FCLI_USER || 'ts-example'
 
 const setupFindyAgency = async () => {
     const acatorProps = {
-        authUrl: process.env.AGENCY_AUTH_URL || 'http://localhost:8088',
-        authOrigin: process.env.AGENCY_AUTH_ORIGIN || 'http://localhost:3000',
+        authUrl: process.env.FCLI_URL || 'http://localhost:8088',
+        authOrigin: process.env.FCLI_ORIGIN || 'http://localhost:3000',
         userName,
-        key: process.env.AGENCY_KEY || '15308490f1e4026284594dd08d31291bc8ef2aeac730d0daf6ff87bb92d4336c',
+        key: process.env.FCLI_KEY || '15308490f1e4026284594dd08d31291bc8ef2aeac730d0daf6ff87bb92d4336c',
     }
     const authenticator = createAcator(acatorProps)
 
     const grpcProps = {
-        serverAddress: process.env.AGENCY_API_SERVER_ADDRESS || 'localhost',
+        serverAddress: process.env.AGENCY_API_SERVER || 'localhost',
         serverPort: parseInt(process.env.AGENCY_API_SERVER_PORT || '50052', 10),
         // NOTE: make sure cert path is defined when using localhost and self-issued certificate.
         // e.g. ../tools/local-env/cert
-        certPath: process.env.AGENCY_API_SERVER_CERT_PATH || '',
+        certPath: process.env.FCLI_TLS_PATH || '',
     }
 
     // Authenticate and open GRPC connection to agency

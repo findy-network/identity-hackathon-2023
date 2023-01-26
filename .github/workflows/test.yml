@@ -27,7 +27,7 @@ jobs:
           npm run build
           npm start &
         env:
-          AGENCY_API_SERVER_CERT_PATH: '../tools/local-env/cert'
+          FCLI_TLS_PATH: '../tools/local-env/cert'
 
       - name: install cli
         run: |
@@ -61,7 +61,7 @@ jobs:
       - name: start server
         run: go run . &
         env:
-          AGENCY_API_SERVER_CERT_PATH: '../tools/local-env/cert'
+          FCLI_TLS_PATH: '../tools/local-env/cert'
 
       - name: install cli
         run: |
@@ -110,7 +110,7 @@ jobs:
       - name: start server
         run: gradle bootRun &
         env:
-          AGENCY_API_SERVER_CERT_PATH: '../tools/local-env/cert'
+          FCLI_TLS_PATH: '../tools/local-env/cert'
 
       - name: run tests
         run: |

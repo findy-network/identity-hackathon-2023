@@ -1,0 +1,34 @@
+initial:
+  sends:
+    - data: |2-
+        Hi there 👋
+      protocol: basic_message
+  target: ISSUE_CRED
+name: issue bot
+states:
+  ISSUE_CRED:
+    transitions:
+      - trigger:
+          protocol: basic_message
+        sends:
+          - data: |-
+              Please accept the credential below to save the credential to your wallet.
+            no_status: true
+            protocol: basic_message
+          - data:
+            event_data:
+              issuing:
+                AttrsJSON: '[{"name":"foo","value":"bar"}]'
+                CredDefID: <CRED_DEF_ID>
+            protocol: issue_cred
+        target: WAITING_ISSUING_STATUS
+  WAITING_ISSUING_STATUS:
+    transitions:
+      - trigger:
+          protocol: issue_cred
+          rule: OUR_STATUS
+        sends:
+          - data: |-
+              All ready! You can now verify your credential in compatible services.
+            no_status: true
+            protocol: basic_message
