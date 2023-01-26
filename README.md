@@ -52,7 +52,11 @@ If you need to download the server cert from a cloud installation, you can use t
 ./tools/dl-cert.sh "$FCLI_SERVER"
 ```
 
-### Run the sample server
+### Run the CLI example
+
+* [CLI](./cli/README.md)
+
+### ...or run the sample server
 
 * [Go](./go/README.md)
 * [Kotlin](./kotlin/README.md)
@@ -61,7 +65,7 @@ If you need to download the server cert from a cloud installation, you can use t
 Note that server start may take a while at first run, because the new credential definition
 is registered on the ledger.
 
-### Testing
+#### Testing the server
 
 1. Open URL <http://localhost:3001/issue> with browser.
 1. Read the QR code with your wallet application or
