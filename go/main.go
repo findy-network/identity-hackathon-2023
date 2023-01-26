@@ -178,7 +178,7 @@ func main() {
 	defer err2.Catch(func(err error) {
 		log.Fatal(err)
 	})
-	agentName := os.Getenv("AGENCY_USER_NAME")
+	agentName := os.Getenv("FCLI_USER")
 	if agentName == "" {
 		agentName = "go-example"
 	}

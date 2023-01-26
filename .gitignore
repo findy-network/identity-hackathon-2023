@@ -4,3 +4,6 @@
 /cert
 CRED_DEF_ID
 .DS_Store
+
+cli/verify-bot.yaml
+cli/issue-bot.yaml

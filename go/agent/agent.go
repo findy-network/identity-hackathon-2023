@@ -43,12 +43,12 @@ type Agent struct {
 var authnCmd = authn.Cmd{
 	SubCmd:   "",
 	UserName: "",
-	Url:      os.Getenv("AGENCY_AUTH_URL"),
+	Url:      os.Getenv("FCLI_URL"),
 	AAGUID:   "12c85a48-4baf-47bd-b51f-f192871a1511",
-	Key:      os.Getenv("AGENCY_KEY"),
+	Key:      os.Getenv("FCLI_KEY"),
 	Counter:  0,
 	Token:    "",
-	Origin:   os.Getenv("AGENCY_AUTH_ORIGIN"),
+	Origin:   os.Getenv("FCLI_ORIGIN"),
 }
 
 type SchemaInfo struct {
@@ -73,7 +73,7 @@ func Init(userName string, schema SchemaInfo, listener Listener) (agent *Agent, 
 	}
 	log.Printf("Auth url %s, origin %s, user %s", authnCmd.Url, authnCmd.Origin, authnCmd.UserName)
 
-	serverAddress := os.Getenv("AGENCY_API_SERVER_ADDRESS")
+	serverAddress := os.Getenv("AGENCY_API_SERVER")
 	if serverAddress == "" {
 		serverAddress = "localhost"
 	}
@@ -97,7 +97,7 @@ func Init(userName string, schema SchemaInfo, listener Listener) (agent *Agent, 
 
 	// set up API connection
 	conf := client.BuildClientConnBase(
-		os.Getenv("AGENCY_API_SERVER_CERT_PATH"),
+		os.Getenv("FCLI_TLS_PATH"),
 		agent.AgencyHost,
 		agent.AgencyPort,
 		[]grpc.DialOption{},

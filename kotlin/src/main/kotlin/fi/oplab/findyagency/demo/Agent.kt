@@ -6,22 +6,22 @@ import kotlinx.coroutines.runBlocking
 import org.findy_network.findy_common_kt.*
 
 class Agent {
-  val userName = System.getenv("AGENCY_USER_NAME") ?: "kotlin-example"
+  val userName = System.getenv("FCLI_USER") ?: "kotlin-example"
   public var connection: Connection
   var credDefId: String
   init {
     val apiPortStr = System.getenv("AGENCY_API_SERVER_PORT") ?: ""
     connection =
         Connection(
-            authUrl = System.getenv("AGENCY_AUTH_URL") ?: "http://localhost:8088",
-            authOrigin = System.getenv("AGENCY_AUTH_ORIGIN") ?: "http://localhost:3000",
+            authUrl = System.getenv("FCLI_URL") ?: "http://localhost:8088",
+            authOrigin = System.getenv("FCLI_ORIGIN") ?: "http://localhost:3000",
             userName = userName,
             seed = "",
-            key = System.getenv("AGENCY_KEY")
+            key = System.getenv("FCLI_KEY")
                     ?: "15308490f1e4026284594dd08d31291bc8ef2aeac730d0daf6ff87bb92d4336c",
-            server = System.getenv("AGENCY_API_SERVER_ADDRESS") ?: "localhost",
+            server = System.getenv("AGENCY_API_SERVER") ?: "localhost",
             port = if (apiPortStr != "") Integer.parseInt(apiPortStr) else 50052,
-            certFolderPath = System.getenv("AGENCY_API_SERVER_CERT_PATH")
+            certFolderPath = System.getenv("FCLI_TLS_PATH")
         )
     credDefId = createCredentialDefinition()
     println("Credential definition ready ${credDefId}")
