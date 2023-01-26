@@ -10,3 +10,7 @@
 go mod tidy -e
 go run .
 ```
+
+## More examples
+
+* [CLI tool](https://github.com/findy-network/findy-agent-cli)

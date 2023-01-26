@@ -19,3 +19,9 @@ npm install
 npm run build
 npm run dev     # start server in watch mode
 ```
+
+## More TS+JS examples
+
+* [Decentralized identity demo](https://github.com/findy-network/agency-demo)
+* [Issuer tool](https://github.com/findy-network/findy-issuer-tool)
+* [OIDC IdP](https://github.com/findy-network/findy-oidc-provider)
