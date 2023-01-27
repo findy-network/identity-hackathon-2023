@@ -62,8 +62,6 @@ render an HTML page with QR code. The QR code can be read using [web wallet](htt
 Once a pairwise connection is established between the server and the wallet user,
 servers sends either a credential (`/issue`) or proof request (`/verify`) to the user.
 
-![Server](./server.gif)
-
 * [Go](./go/README.md)
 * [Kotlin](./kotlin/README.md)
 * [Typescript](./ts/README.md)
@@ -72,6 +70,8 @@ Note that server start may take a while at first run, because the new credential
 is registered on the ledger.
 
 #### Testing the server
+
+![Server](https://user-images.githubusercontent.com/29113682/215501289-29fbf029-f796-487b-8370-6255d036e50d.gif)
 
 1. Open URL <http://localhost:3001/issue> with browser.
 1. Read the QR code with your wallet application or
