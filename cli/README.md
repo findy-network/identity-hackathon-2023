@@ -21,6 +21,8 @@
 ./run.sh
 ```
 
+You can ignore the rpc errors that CLI prints out after canceling issuer/verifier bot.
+
 ## Testing
 
 1. Read the QR code with your wallet application or

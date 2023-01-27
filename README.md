@@ -1,13 +1,9 @@
 # identity-hackathon-2023
 
-Sample codes for Findy Agency service agents.
+Sample codes for [Findy Agency](https://findy-network.github.io) service agents.
 
-These sample servers demonstrate how
+These sample scripts and servers demonstrate how
 an agency client can issue and verify credentials using the Findy Agency API.
-The sample server exposes two endpoints `/issue` and `/verify` that both
-render an HTML page with QR code. The QR code can be read using [web wallet](https://github.com/findy-network/findy-wallet-pwa).
-Once a pairwise connection is established between the server and the wallet user,
-servers sends either a credential (`/issue`) or proof request (`/verify`) to the user.
 
 ## Run the sample
 
@@ -54,9 +50,19 @@ If you need to download the server cert from a cloud installation, you can use t
 
 ### Run the CLI example
 
+The sample script utilizes [findy-agent-cli](https://github.com/findy-network/findy-agent-cli#installation)
+CLI tool for issuing and verifying credentials.
+
 * [CLI](./cli/README.md)
 
 ### ...or run the sample server
+
+The sample server exposes two endpoints `/issue` and `/verify` that both
+render an HTML page with QR code. The QR code can be read using [web wallet](https://github.com/findy-network/findy-wallet-pwa).
+Once a pairwise connection is established between the server and the wallet user,
+servers sends either a credential (`/issue`) or proof request (`/verify`) to the user.
+
+![Server](./server.gif)
 
 * [Go](./go/README.md)
 * [Kotlin](./kotlin/README.md)
