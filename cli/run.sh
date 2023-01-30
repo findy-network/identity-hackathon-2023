@@ -2,49 +2,53 @@
 
 set -e
 
+ORIG_FCLI_JWT=$FCLI_JWT
+ORIG_FCLI_CONFIG=$FCLI_CONFIG
+ORIG_FCLI_USER=$FCLI_USER
+
 CRED_DEF_ID=$(cat CRED_DEF_ID || echo "")
 
 function createCredDef {
-    if [ -z "$CRED_DEF_ID" ]; then
-        echo "Create schema"
-        sch_id=$(findy-agent-cli agent create-schema \
-            --name="foobar" \
-            --version=1.0 foo)
+  if [ -z "$CRED_DEF_ID" ]; then
+    echo "Create schema"
+    sch_id=$(findy-agent-cli agent create-schema \
+      --name="foobar" \
+      --version=1.0 foo)
 
-        # read schema - make sure it's found in ledger
-        echo "Read schema $sch_id"
-        schema=$(findy-agent-cli agent get-schema --schema-id $sch_id)
+    # read schema - make sure it's found in ledger
+    echo "Read schema $sch_id"
+    schema=$(findy-agent-cli agent get-schema --schema-id $sch_id)
 
-        # create cred def
-        echo "Create cred def with schema id $sch_id"
-        CRED_DEF_ID=$(findy-agent-cli agent create-cred-def \
-            --id $sch_id --tag "$FCLI_USER")
+    # create cred def
+    echo "Create cred def with schema id $sch_id"
+    CRED_DEF_ID=$(findy-agent-cli agent create-cred-def \
+      --id $sch_id --tag "$FCLI_USER")
 
-        # read cred def - make sure it's found in ledger
-        echo "Read cred def $CRED_DEF_ID"
-        cred_def=$(findy-agent-cli agent get-cred-def --id $CRED_DEF_ID)
+    # read cred def - make sure it's found in ledger
+    echo "Read cred def $CRED_DEF_ID"
+    cred_def=$(findy-agent-cli agent get-cred-def --id $CRED_DEF_ID)
 
-        echo $CRED_DEF_ID >"./CRED_DEF_ID"
-    fi
+    echo $CRED_DEF_ID >"./CRED_DEF_ID"
+  fi
 }
 
 function login {
-    local jwt=$(findy-agent-cli authn login || "")
-    if [ -z "$jwt" ]; then
-        findy-agent-cli authn register
-        jwt=$(findy-agent-cli authn login)
-    fi
-    export FCLI_JWT=$jwt
+  local jwt=$(findy-agent-cli authn login || "")
+  if [ -z "$jwt" ]; then
+    findy-agent-cli authn register
+    jwt=$(findy-agent-cli authn login)
+  fi
+  export FCLI_JWT=$jwt
 }
 
 current_dir=$(dirname "$BASH_SOURCE")
 
 if [ -z "$FCLI_URL" ]; then
-    export FCLI_CONFIG="./config.yaml"
+  export FCLI_CONFIG="./config.yaml"
 fi
 
 if [ -z "$FCLI_USER" ]; then
-    export FCLI_USER="cli-example"
+  export FCLI_USER="cli-example"
 fi
 
 login
@@ -84,3 +88,7 @@ printf "\nVerify bot started 🤖\n"
 printf "\nHit C-c once you have accepted the proof request.\n"
 
 findy-agent-cli bot start --conn-id $conn_id $current_dir/verify-bot.yaml
+
+export FCLI_JWT=$ORIG_FCLI_JWT
+export FCLI_CONFIG=$ORIG_FCLI_CONFIG
+export FCLI_USER=$ORIG_FCLI_USER

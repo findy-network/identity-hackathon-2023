@@ -32,3 +32,6 @@ states:
               All ready! You can now verify your credential in compatible services.
             no_status: true
             protocol: basic_message
+        target: TERMINATE
+  TERMINATE:
+    terminate: true
