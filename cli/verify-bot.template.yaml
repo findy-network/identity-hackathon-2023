@@ -39,3 +39,6 @@ states:
             protocol: basic_message
         trigger:
           protocol: present_proof
+        target: TERMINATE
+  TERMINATE:
+    terminate: true
