@@ -34,8 +34,8 @@ sequenceDiagram
 
     CLI->>Agency: Create invitation
     Agency-->>CLI: Invitation URL
-    CLI->>Issue Bot: Start
     CLI-->>Web Wallet: <<show QR code>
+    CLI->>Issue Bot: Start
     Web Wallet->>Agency: Read QR code
     Agency-->>Issue Bot: Connection ready!
     Issue Bot->>Agency: Issue credential
@@ -57,8 +57,8 @@ sequenceDiagram
 
     CLI->>Agency: Create invitation
     Agency-->>CLI: Invitation URL
-    CLI->>Verify Bot: Start
     CLI-->>Web Wallet: <<show QR code>
+    CLI->>Verify Bot: Start
     Web Wallet->>Agency: Read QR code
     Agency-->>Verify Bot: Connection ready!
     Verify Bot->>Agency: Proof request
@@ -69,7 +69,6 @@ sequenceDiagram
     Agency-->>Verify Bot: Proof ready!
     Verify Bot->>Verify Bot: Terminate
 ```
-
 
 ## Requirements
 
