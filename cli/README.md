@@ -91,16 +91,14 @@ sequenceDiagram
 ./run.sh
 ```
 
-You can ignore the rpc errors that CLI prints out after canceling issuer/verifier bot.
-
 ## Testing
 
 1. Read the QR code with your wallet application or
 paste the invitation url to the "Add Connection" dialog input field.
-1. Accept the credential sent from the CLI. Hit C-c once the credential is saved.
+1. Accept the credential sent from the CLI.
 1. Read the QR code with your wallet application or
 paste the invitation url to the "Add Connection" dialog input field.
-1. Accept the proof request sent from this server. Hit C-c once the proof request is accepted.
+1. Accept the proof request sent from this server.
 
 ## More examples
 

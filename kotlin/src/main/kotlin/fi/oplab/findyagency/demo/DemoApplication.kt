@@ -108,7 +108,7 @@ class AppController {
 
     val data =
         Json { ignoreUnknownKeys = true }.decodeFromString<InvitationData>(invitation.getJSON())
-    println("Created invitaion with id ${data.id}")
+    println("Created invitation with id ${data.id}")
     idList.add(data.id)
 
     // Create QR code for invitation URL
