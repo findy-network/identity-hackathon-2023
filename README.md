@@ -5,6 +5,8 @@ Sample codes for [Findy Agency](https://findy-network.github.io) service agents.
 These sample scripts and servers demonstrate how
 an agency client can issue and verify credentials using the Findy Agency API.
 
+Pro tip: use [direnv](https://direnv.net/) to manage your environment variables.
+
 ## Run the sample
 
 ### Setup env variables for the agency connection
@@ -25,7 +27,7 @@ export FCLI_ORIGIN='http://localhost:3000'
 # use for example your email address
 export FCLI_USER='my-very-own-issuer@example.com'
 
-# desired agent authentication key (create new key: 'findy-agent-cli new-key')
+# desired agent authentication key (create new random key: 'findy-agent-cli new-key')
 # note: this key authenticates your client to agency, so keep it secret
 export FCLI_KEY='15308490f1e4026284594dd08d31291bc8ef2aeac730d0daf6ff87bb92d4336c'
 
@@ -39,13 +41,16 @@ export AGENCY_API_SERVER_PORT='50052'
 export FCLI_SERVER="$AGENCY_API_SERVER:$AGENCY_API_SERVER_PORT"
 
 # agency API server cert path
-export FCLI_TLS_PATH='/path/to/self-issued-cert'
+# relative to the folder where you run the sample
+export FCLI_TLS_PATH='../tools/local-env/cert'
 ```
 
 If you need to download the server cert from a cloud installation, you can use the script `dl-cert.sh`:
 
 ```bash
 ./tools/dl-cert.sh "$FCLI_SERVER"
+
+export FCLI_TLS_PATH='../cert'
 ```
 
 ### Run the CLI example

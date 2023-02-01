@@ -70,7 +70,6 @@ qrencode -m 2 -t utf8i <<<$invitation
 printf "\n$invitation\n"
 
 printf "\nIssue bot started 🤖\n"
-printf "\nHit C-c once you have accepted the credential.\n"
 
 findy-agent-cli bot start --conn-id $conn_id $current_dir/issue-bot.yaml
 
@@ -85,7 +84,6 @@ qrencode -m 2 -t utf8i <<<$invitation
 printf "\n$invitation\n"
 
 printf "\nVerify bot started 🤖\n"
-printf "\nHit C-c once you have accepted the proof request.\n"
 
 findy-agent-cli bot start --conn-id $conn_id $current_dir/verify-bot.yaml
 
