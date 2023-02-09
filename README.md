@@ -55,12 +55,16 @@ export FCLI_TLS_PATH='../cert'
 
 ### Run the CLI example
 
+Read [the introduction text](https://findy-network.github.io/blog/2023/01/30/getting-started-with-ssi-service-agent-development/).
+
 The sample script utilizes [findy-agent-cli](https://github.com/findy-network/findy-agent-cli#installation)
 CLI tool for issuing and verifying credentials.
 
 * [CLI](./cli/README.md)
 
 ### ...or run the sample server
+
+Read [the introduction text](https://findy-network.github.io/blog/2023/02/06/how-to-equip-your-app-with-vc-superpowers/).
 
 The sample server exposes two endpoints `/issue` and `/verify` that both
 render an HTML page with QR code. The QR code can be read using [web wallet](https://github.com/findy-network/findy-wallet-pwa).

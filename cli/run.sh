@@ -33,7 +33,7 @@ function createCredDef {
 }
 
 function login {
-  local jwt=$(findy-agent-cli authn login || "")
+  local jwt=$(findy-agent-cli authn login || echo "")
   if [ -z "$jwt" ]; then
     findy-agent-cli authn register
     jwt=$(findy-agent-cli authn login)
