@@ -36,3 +36,11 @@ paste the invitation url to the "Add Connection" dialog input field.
 
 * [Findy Agency demo](https://github.com/findy-network/findy-agency-demo)
 * [CLI usage examples](https://github.com/findy-network/findy-agent-cli#cli-usage-examples)
+
+## Troubleshooting
+
+If your CLI issuer fails to send the credential offer,
+try to delete the generated `CRED_DEF_ID`-file and rerun the script.
+Missing `CRED_DEF_ID`-file will force the script to recreate the credential definition.
+You may encounter this problem if, for example,
+you have initially created the credential definition with another user.
