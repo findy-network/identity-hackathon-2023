@@ -76,7 +76,10 @@ servers sends either a credential (`/issue`) or proof request (`/verify`) to the
 * [Typescript](./ts/README.md)
 
 Note that server start may take a while at first run, because the new credential definition
-is registered on the ledger.
+is registered on the ledger. The server will create file `CRED_DEF_ID`
+that holds the credential definition id. If this file exists, the app will not attempt to create
+the credential definition. Thus, if you make changes to the client user name or schema content,
+make sure to delete the `CRED_DEF_ID`-file before restarting the server.
 
 #### Testing the server
 
