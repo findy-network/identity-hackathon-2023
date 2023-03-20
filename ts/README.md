@@ -11,6 +11,12 @@ Note that API server cert path can be empty if using trusted issuer.
 export FCLI_TLS_PATH='/path/to/self-issued-cert'
 ```
 
+## Optional: Start dev container
+
+## Configure env variables
+
+source <(curl localhost:3000/set-env.sh)
+
 ## Start server
 
 ```bash
