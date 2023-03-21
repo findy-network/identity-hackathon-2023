@@ -23,12 +23,14 @@ const setupFindyAgency = async () => {
   }
   const authenticator = createAcator(acatorProps)
 
+  const serverAddress = process.env.AGENCY_API_SERVER || 'localhost'
+  const certPath = process.env.FCLI_TLS_PATH || ''
   const grpcProps = {
-    serverAddress: process.env.AGENCY_API_SERVER || 'localhost',
+    serverAddress,
     serverPort: parseInt(process.env.AGENCY_API_SERVER_PORT || '50052', 10),
-    // NOTE: make sure cert path is defined when using localhost and self-issued certificate.
-    // e.g. ../tools/local-env/cert
-    certPath: process.env.FCLI_TLS_PATH || '',
+    // NOTE: we currently assume that we do not need certs for cloud installation
+    // as the cert is issued by a trusted issuer
+    certPath: serverAddress === 'localhost' ? certPath : ''
   }
 
   // Authenticate and open GRPC connection to agency

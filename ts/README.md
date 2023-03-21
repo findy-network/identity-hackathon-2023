@@ -15,7 +15,14 @@ export FCLI_TLS_PATH='/path/to/self-issued-cert'
 
 ## Configure env variables
 
+Running for the first time:
+
+```bash
 source <(curl localhost:3000/set-env.sh)
+```
+
+This script will create `.envrc` that will export needed variables.
+You can recreate the environment with `direnv allow` or `source .envrc`
 
 ## Start server
 
