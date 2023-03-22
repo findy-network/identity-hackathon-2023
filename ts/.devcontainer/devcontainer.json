@@ -10,9 +10,7 @@
     "ghcr.io/devcontainers-contrib/features/direnv-asdf:2": {}
   },
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
-  "forwardPorts": [
-    3001
-  ],
+  // "forwardPorts": [],
   // Use 'postCreateCommand' to run commands after the container is created.
   "postCreateCommand": "bash -i -c 'nvm install' && npm install && .devcontainer/install-cli.sh",
   // Configure tool-specific properties.
