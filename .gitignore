@@ -7,3 +7,12 @@ CRED_DEF_ID
 
 cli/verify-bot.yaml
 cli/issue-bot.yaml
+
+ts/cert
+ts/install.sh
+
+go/cert
+go/install.sh
+
+kotlin/cert
+kotlin/install.sh
