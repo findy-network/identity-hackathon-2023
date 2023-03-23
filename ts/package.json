@@ -13,7 +13,7 @@
   "author": "findy-network",
   "license": "Apache-2.0",
   "dependencies": {
-    "@findy-network/findy-common-ts": "^0.2.8",
+    "@findy-network/findy-common-ts": "^0.2.9",
     "express": "^4.18.2",
     "qrcode": "^1.5.1"
   },
