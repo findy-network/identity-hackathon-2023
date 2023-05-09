@@ -6,9 +6,8 @@ ORIG_FCLI_JWT=$FCLI_JWT
 ORIG_FCLI_CONFIG=$FCLI_CONFIG
 ORIG_FCLI_USER=$FCLI_USER
 
-export CRED_DEF_ID=$(cat CRED_DEF_ID || echo "")
-
 function createCredDef {
+  CRED_DEF_ID=$(cat CRED_DEF_ID)
   if [ -z "$CRED_DEF_ID" ]; then
     echo "Create schema"
     sch_id=$(findy-agent-cli agent create-schema \
@@ -29,7 +28,6 @@ function createCredDef {
     cred_def=$(findy-agent-cli agent get-cred-def --id $CRED_DEF_ID)
 
     echo $CRED_DEF_ID >"./CRED_DEF_ID"
-    export CRED_DEF_ID="$CRED_DEF_ID"
   fi
 }
 
@@ -66,6 +64,8 @@ qrencode -m 2 -t utf8i <<<$invitation
 printf "\n$invitation\n"
 
 printf "\nIssue bot started 🤖\n"
+
+export CRED_DEF_ID=$(cat CRED_DEF_ID)
 
 findy-agent-cli bot start --conn-id $conn_id $current_dir/issue-bot.yaml
 

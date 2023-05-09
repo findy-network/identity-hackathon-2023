@@ -1,17 +1,14 @@
 initial:
-  sends:
-    - data: |2-
-        Hi there 👋
-      protocol: basic_message
   target: ISSUE_CRED
 name: issue bot
 states:
   ISSUE_CRED:
     transitions:
       - trigger:
-          protocol: basic_message
+          protocol: connection
         sends:
           - data: |-
+              Hi there 👋
               Please accept the credential below to save the credential to your wallet.
             no_status: true
             protocol: basic_message

@@ -1,17 +1,14 @@
 initial:
-  sends:
-    - data: |2-
-        Hi there 👋
-      protocol: basic_message
   target: VERIFY_CRED
 name: verify bot
 states:
   VERIFY_CRED:
     transitions:
       - trigger:
-          protocol: basic_message
+          protocol: connection
         sends:
           - data: |-
+              Hi there 👋
               We need to verify your foobar credential.
               Please accept the proof and we can continue.
             no_status: true

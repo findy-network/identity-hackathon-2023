@@ -5,6 +5,8 @@
 CRED_DEF_ID
 .DS_Store
 
+cli/cert
+
 ts/cert
 ts/install.sh
 
