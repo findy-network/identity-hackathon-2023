@@ -6,7 +6,7 @@ ORIG_FCLI_JWT=$FCLI_JWT
 ORIG_FCLI_CONFIG=$FCLI_CONFIG
 ORIG_FCLI_USER=$FCLI_USER
 
-CRED_DEF_ID=$(cat CRED_DEF_ID || echo "")
+export CRED_DEF_ID=$(cat CRED_DEF_ID || echo "")
 
 function createCredDef {
   if [ -z "$CRED_DEF_ID" ]; then
@@ -29,6 +29,7 @@ function createCredDef {
     cred_def=$(findy-agent-cli agent get-cred-def --id $CRED_DEF_ID)
 
     echo $CRED_DEF_ID >"./CRED_DEF_ID"
+    export CRED_DEF_ID="$CRED_DEF_ID"
   fi
 }
 
@@ -53,11 +54,6 @@ fi
 
 login
 createCredDef
-
-# replace cred def id in bot configs
-sub_cmd='{sub("<CRED_DEF_ID>","'$CRED_DEF_ID'")}1'
-awk "$sub_cmd" "issue-bot.template.yaml" >"issue-bot.yaml"
-awk "$sub_cmd" "verify-bot.template.yaml" >"verify-bot.yaml"
 
 conn_id=$(echo $(uuidgen) | tr '[:upper:]' '[:lower:]')
 invitation=$(findy-agent-cli agent invitation --label $FCLI_USER -u --conn-id=$conn_id)

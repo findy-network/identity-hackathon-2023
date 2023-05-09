@@ -16,7 +16,7 @@ states:
               Please accept the proof and we can continue.
             no_status: true
             protocol: basic_message
-          - data: '[{"name":"foo","credDefId":"<CRED_DEF_ID>"}]'
+          - data: '[{"name":"foo","credDefId":"${CRED_DEF_ID}"}]'
             protocol: present_proof
         target: WAITING_CRED_PROOF_QA
   WAITING_CRED_PROOF_QA:
@@ -26,7 +26,7 @@ states:
             protocol: answer
         target: WAITING_CRED_PROOF
         trigger:
-          data: '[{"name":"foo","credDefId":"<CRED_DEF_ID>"}]'
+          data: '[{"name":"foo","credDefId":"${CRED_DEF_ID}"}]'
           protocol: present_proof
           rule: ACCEPT_AND_INPUT_VALUES
           type_id: ANSWER_NEEDED_PROOF_VERIFY

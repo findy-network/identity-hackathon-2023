@@ -5,9 +5,6 @@
 CRED_DEF_ID
 .DS_Store
 
-cli/verify-bot.yaml
-cli/issue-bot.yaml
-
 ts/cert
 ts/install.sh
 

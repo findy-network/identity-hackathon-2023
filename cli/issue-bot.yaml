@@ -19,7 +19,7 @@ states:
             event_data:
               issuing:
                 AttrsJSON: '[{"name":"foo","value":"bar"}]'
-                CredDefID: <CRED_DEF_ID>
+                CredDefID: ${CRED_DEF_ID}
             protocol: issue_cred
         target: WAITING_ISSUING_STATUS
   WAITING_ISSUING_STATUS:
